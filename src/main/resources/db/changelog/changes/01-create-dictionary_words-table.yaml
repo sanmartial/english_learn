@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-dictionary_words-table
+      author: org.globaroman
+      changes:
+        - createTable:
+            tableName: dictionary_words
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: word
+                  type: VARCHAR(255)
+              - column:
+                  name: translate
+                  type: VARCHAR(500)
+              - column:
+                  name: learned_word
+                  type: boolean
+                  defaultValueBoolean: false
+
+
+
+

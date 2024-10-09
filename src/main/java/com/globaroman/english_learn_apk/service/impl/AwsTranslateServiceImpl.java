@@ -4,9 +4,19 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.globaroman.english_learn_apk.service.AwsTranslateService;
-import org.springframework.beans.factory.annotation.Value;
 
+import com.globaroman.english_learn_apk.service.AwsTranslateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.translate.TranslateClient;
+import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
+import software.amazon.awssdk.services.translate.model.TranslateTextResponse;
+
+@Service
 public class AwsTranslateServiceImpl implements AwsTranslateService {
     @Value("${AWS_ACCESS_KEY}")
     private String accessKey;
@@ -15,11 +25,26 @@ public class AwsTranslateServiceImpl implements AwsTranslateService {
     private String secretKey;
 
 
-    private AmazonS3 getS3Client() {
-        return AmazonS3ClientBuilder.standard()
-                .withCredentials(
-                        new AWSStaticCredentialsProvider(
-                                new BasicAWSCredentials(accessKey, secretKey)))
+    @Override
+    public String translateText(String text, String sourceLang, String targetLang) {
+
+        TranslateTextRequest request = TranslateTextRequest.builder()
+                .sourceLanguageCode(sourceLang) // Наприклад, "en" для англійської
+                .targetLanguageCode(targetLang) // Наприклад, "uk" для української
+                .text(text)
+                .build();
+        TranslateTextResponse response = getClient().translateText(request);
+        return response.translatedText();
+    }
+    private TranslateClient getClient() {
+        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
+
+        return TranslateClient.builder()
+                .region(Region.US_EAST_1) // Вкажіть потрібний регіон
+                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
                 .build();
     }
+
+
+
 }
