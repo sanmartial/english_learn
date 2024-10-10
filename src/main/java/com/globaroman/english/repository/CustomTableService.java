@@ -1,11 +1,10 @@
-package com.globaroman.english_learn_apk.repository;
+package com.globaroman.english.repository;
 
-import com.globaroman.english_learn_apk.dto.DataFromDataBaseDto;
+import com.globaroman.english.dto.DataFromDataBaseDto;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CustomTableService {

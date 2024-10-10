@@ -1,6 +1,6 @@
-package com.globaroman.english_learn_apk.config;
+package com.globaroman.english.config;
 
-import com.globaroman.english_learn_apk.service.TelegrammBot;
+import com.globaroman.english.controller.TelegrammBot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;

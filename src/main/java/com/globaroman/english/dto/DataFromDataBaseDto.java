@@ -1,4 +1,4 @@
-package com.globaroman.english_learn_apk.dto;
+package com.globaroman.english.dto;
 
 import lombok.Data;
 

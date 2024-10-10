@@ -1,12 +1,11 @@
-package com.globaroman.english_learn_apk.service.impl;
+package com.globaroman.english.service.impl;
 
-import com.globaroman.english_learn_apk.dto.DataFromDataBaseDto;
-import com.globaroman.english_learn_apk.repository.CustomTableService;
-import com.globaroman.english_learn_apk.service.LoadWorldFromDataBase;
+import com.globaroman.english.dto.DataFromDataBaseDto;
+import com.globaroman.english.repository.CustomTableService;
+import com.globaroman.english.service.LoadWorldFromDataBase;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

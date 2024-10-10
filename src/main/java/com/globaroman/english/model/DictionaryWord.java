@@ -1,4 +1,4 @@
-package com.globaroman.english_learn_apk.model;
+package com.globaroman.english.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

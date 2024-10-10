@@ -1,4 +1,4 @@
-package com.globaroman.english_learn_apk.config;
+package com.globaroman.english.config;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

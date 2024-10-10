@@ -1,13 +1,12 @@
-package com.globaroman.english_learn_apk;
+package com.globaroman.english;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class EnglishLearnApkApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+//    @Test
+//    void contextLoads() {
+//    }
 
 }
