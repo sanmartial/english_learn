@@ -1,12 +1,6 @@
-package com.globaroman.english_learn_apk.service.impl;
+package com.globaroman.english.service.impl;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-
-import com.globaroman.english_learn_apk.service.AwsTranslateService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.globaroman.english.service.AwsTranslateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -24,7 +18,6 @@ public class AwsTranslateServiceImpl implements AwsTranslateService {
     @Value("${AWS_SECRET_KEY}")
     private String secretKey;
 
-
     @Override
     public String translateText(String text, String sourceLang, String targetLang) {
 
@@ -36,6 +29,7 @@ public class AwsTranslateServiceImpl implements AwsTranslateService {
         TranslateTextResponse response = getClient().translateText(request);
         return response.translatedText();
     }
+
     private TranslateClient getClient() {
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
 
@@ -44,7 +38,4 @@ public class AwsTranslateServiceImpl implements AwsTranslateService {
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
                 .build();
     }
-
-
-
 }

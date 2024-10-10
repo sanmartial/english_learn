@@ -1,7 +1,6 @@
-package com.globaroman.english_learn_apk.service;
+package com.globaroman.english.service;
 
-import com.globaroman.english_learn_apk.dto.DataFromDataBaseDto;
-
+import com.globaroman.english.dto.DataFromDataBaseDto;
 import java.util.List;
 
 public interface LoadWorldFromDataBase {
