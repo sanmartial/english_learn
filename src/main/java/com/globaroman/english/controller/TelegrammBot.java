@@ -1,23 +1,15 @@
 package com.globaroman.english.controller;
 
 import com.globaroman.english.config.BotConfig;
-import com.globaroman.english.dto.DataFromDataBaseDto;
-import com.globaroman.english.model.DictionaryWord;
 import com.globaroman.english.service.AwsTranslateService;
 import com.globaroman.english.service.DictionaryService;
 import com.globaroman.english.service.LoadWorldFromDataBase;
 import com.globaroman.english.service.ProcessingDataService;
 import com.globaroman.english.service.ReadWriteFromToFileService;
 import com.vdurmont.emoji.EmojiParser;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -136,7 +128,8 @@ public class TelegrammBot extends TelegramLongPollingBot {
 
                 List<String> dataFromFiles = readWriteFromToFileService.readDataFromFile(fileUrl);
 
-                Set<String> afterProcessDatas = processingDataService.getUniqueDataAfterProcess(dataFromFiles);
+                Set<String> afterProcessDatas = processingDataService
+                        .getUniqueDataAfterProcess(dataFromFiles);
 
                 sendMessage(chatId, dictionaryService.loadNewWordToDataBase(afterProcessDatas));
 

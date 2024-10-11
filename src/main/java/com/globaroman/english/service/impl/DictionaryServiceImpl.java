@@ -7,7 +7,6 @@ import com.globaroman.english.service.DictionaryService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,15 +34,6 @@ public class DictionaryServiceImpl implements DictionaryService {
                 word.setWordLearned(false);
                 dictionaryRepository.save(word);
             }
-//            if (!string.isEmpty() && words.isEmpty()) {
-//
-//
-//                DictionaryWord dictWord = new DictionaryWord();
-//                dictWord.setEnglishWord(string);
-//                dictWord.setTranslatedWord(translateService.translateText(string,
-//                        "en", "ru"));
-//                dictWord.setWordLearned(false);
-//                dictionaryRepository.save(dictWord);
             count++;
         }
 
@@ -77,7 +67,8 @@ public class DictionaryServiceImpl implements DictionaryService {
             List<DictionaryWord> words = dictionaryRepository.findByWord(data);
             if (words.isEmpty() && !data.isEmpty()) {
                 DictionaryWord word = getNewWord(data);
-                sb.append(word.getEnglishWord()).append(" : ").append(word.getTranslatedWord()).append("\n");
+                sb.append(word.getEnglishWord()).append(" : ")
+                        .append(word.getTranslatedWord()).append("\n");
             }
         }
         return sb.toString();
