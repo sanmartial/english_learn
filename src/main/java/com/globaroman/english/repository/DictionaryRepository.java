@@ -15,4 +15,8 @@ public interface DictionaryRepository extends JpaRepository<DictionaryWord, Long
             + "false ORDER BY RAND() LIMIT 1",
             nativeQuery = true)
     DictionaryWord findRandomWord();
+
+    @Query(value = "SELECT count(*) FROM dictionary_words where learned_word = false",
+            nativeQuery = true)
+    int countByLearnedWordFalse();
 }

@@ -1,19 +1,15 @@
 package com.globaroman.english.controller;
 
 import com.globaroman.english.config.BotConfig;
-import com.globaroman.english.dto.DataFromDataBaseDto;
-import com.globaroman.english.model.DictionaryWord;
 import com.globaroman.english.service.AwsTranslateService;
 import com.globaroman.english.service.DictionaryService;
 import com.globaroman.english.service.LoadWorldFromDataBase;
+import com.globaroman.english.service.ProcessingDataService;
+import com.globaroman.english.service.ReadWriteFromToFileService;
 import com.vdurmont.emoji.EmojiParser;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -36,16 +32,22 @@ public class TelegrammBot extends TelegramLongPollingBot {
     private final LoadWorldFromDataBase loadWorldFromDataBase;
     private final AwsTranslateService translateService;
     private final DictionaryService dictionaryService;
+    private final ReadWriteFromToFileService readWriteFromToFileService;
+    private final ProcessingDataService processingDataService;
 
     public TelegrammBot(BotConfig botConfig,
                         LoadWorldFromDataBase loadWorldFromDataBase,
                         AwsTranslateService translateService,
-                        DictionaryService dictionaryService
+                        DictionaryService dictionaryService,
+                        ReadWriteFromToFileService readWriteFromToFileService,
+                        ProcessingDataService processingDataService
                         ) {
         this.botConfig = botConfig;
         this.loadWorldFromDataBase = loadWorldFromDataBase;
         this.translateService = translateService;
         this.dictionaryService = dictionaryService;
+        this.readWriteFromToFileService = readWriteFromToFileService;
+        this.processingDataService = processingDataService;
 
         List<BotCommand> listofCommands = new ArrayList<>();
         listofCommands.add(new BotCommand("/start", "get a welcome message"));
@@ -53,6 +55,7 @@ public class TelegrammBot extends TelegramLongPollingBot {
         listofCommands.add(new BotCommand("/three", "get 3 random english words"));
         listofCommands.add(new BotCommand("/two", "get 2 random english words"));
         listofCommands.add(new BotCommand("/one", "get random english word"));
+        listofCommands.add(new BotCommand("/count", "кількість нових слів в базі даних"));
 
         try {
             this.execute(new SetMyCommands(listofCommands, new BotCommandScopeDefault(), null));
@@ -99,27 +102,10 @@ public class TelegrammBot extends TelegramLongPollingBot {
                     sendMessage(chatId, getRandomWordFromDB(ONE_WORD));
                 }
 
-                case "/load" -> {
-                    List<DictionaryWord> list = new ArrayList<>();
-                    for (DataFromDataBaseDto dto : loadWorldFromDataBase.getDate()) {
-                        if (!dto.getWord().isEmpty()) {
-                            DictionaryWord word = new DictionaryWord();
-                            word.setEnglishWord(dto.getWord());
-                            word.setTranslatedWord(translateService.translateText(dto.getWord(),
-                                    "en", "ru"));
-                            word.setWordLearned(true);
-                            System.out.println(word);
-                            list.add(word);
-                        }
-                    }
-
-                    dictionaryService.loadToDataBase(list);
-
+                case "/count" -> {
+                    sendMessage(chatId, dictionaryService.countNewWords());
                 }
-                case "/deletedata" -> {
 
-                    //modelPokerService.deleteInfoFromDb();
-                }
                 default -> {
                     sendMessage(chatId, addNewWordsToDB(message));
 
@@ -133,27 +119,21 @@ public class TelegrammBot extends TelegramLongPollingBot {
             Long chatId = update.getMessage().getChatId();
 
             try {
+
                 GetFile getFileMethod = new GetFile();
                 getFileMethod.setFileId(fileId);
                 File telegramFile = execute(getFileMethod);
 
                 String fileUrl = "https://api.telegram.org/file/bot" + getBotToken() + "/" + telegramFile.getFilePath();
 
-                URL url = new URL(fileUrl);
-                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-                String line = null;
-                List<String> list = new ArrayList<>();
+                List<String> dataFromFiles = readWriteFromToFileService.readDataFromFile(fileUrl);
 
-                while ((line = in.readLine()) != null) {
-                    list.add(line);
-                }
-                in.close();
+                Set<String> afterProcessDatas = processingDataService
+                        .getUniqueDataAfterProcess(dataFromFiles);
 
-                sendMessage(chatId, dictionaryService.loadToDataBaseIfNoThisWord(list));
+                sendMessage(chatId, dictionaryService.loadNewWordToDataBase(afterProcessDatas));
 
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            } catch (TelegramApiException | IOException e) {
+            } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
         }

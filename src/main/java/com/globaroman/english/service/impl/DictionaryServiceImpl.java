@@ -6,6 +6,7 @@ import com.globaroman.english.service.AwsTranslateService;
 import com.globaroman.english.service.DictionaryService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,15 +34,6 @@ public class DictionaryServiceImpl implements DictionaryService {
                 word.setWordLearned(false);
                 dictionaryRepository.save(word);
             }
-//            if (!string.isEmpty() && words.isEmpty()) {
-//
-//
-//                DictionaryWord dictWord = new DictionaryWord();
-//                dictWord.setEnglishWord(string);
-//                dictWord.setTranslatedWord(translateService.translateText(string,
-//                        "en", "ru"));
-//                dictWord.setWordLearned(false);
-//                dictionaryRepository.save(dictWord);
             count++;
         }
 
@@ -60,15 +52,41 @@ public class DictionaryServiceImpl implements DictionaryService {
     public String saveNewWord(String line) {
         List<DictionaryWord> words = dictionaryRepository.findByWord(line);
         if (words.isEmpty()) {
-            DictionaryWord word = new DictionaryWord();
-            word.setEnglishWord(line);
-            word.setTranslatedWord(translateService.translateText(line,
-                    "en", "ru"));
-            word.setWordLearned(false);
-            dictionaryRepository.save(word);
-            return line + " > success";
+            DictionaryWord word = getNewWord(line);
+            return "Добавлено: " + word.getEnglishWord() + " : " + word.getTranslatedWord();
         }
 
-        return line + " > already exists";
+        return line + " вже існує";
+    }
+
+    @Override
+    public String loadNewWordToDataBase(Set<String> afterProcessDatas) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Добавлено: \n");
+        for (String data : afterProcessDatas) {
+            List<DictionaryWord> words = dictionaryRepository.findByWord(data);
+            if (words.isEmpty() && !data.isEmpty()) {
+                DictionaryWord word = getNewWord(data);
+                sb.append(word.getEnglishWord()).append(" : ")
+                        .append(word.getTranslatedWord()).append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String countNewWords() {
+        int countNewWord = dictionaryRepository.countByLearnedWordFalse();
+        return "База даних включає " + countNewWord + " нових слів";
+    }
+
+    private DictionaryWord getNewWord(String line) {
+        DictionaryWord word = new DictionaryWord();
+        word.setEnglishWord(line);
+        word.setTranslatedWord(translateService.translateText(line,
+                "en", "ru"));
+        word.setWordLearned(false);
+        dictionaryRepository.save(word);
+        return word;
     }
 }
