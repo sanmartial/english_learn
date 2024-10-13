@@ -19,4 +19,6 @@ public interface DictionaryRepository extends JpaRepository<DictionaryWord, Long
     @Query(value = "SELECT count(*) FROM dictionary_words where learned_word = false",
             nativeQuery = true)
     int countByLearnedWordFalse();
+
+    boolean existsByEnglishWord(String line);
 }

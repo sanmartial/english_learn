@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.globaroman</groupId>
-    <artifactId>english_learn_apk</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>englishWords</artifactId>
+    <version>1</version>
     <name>english_learn_apk</name>
     <description>english_learn_apk</description>
     <url/>
