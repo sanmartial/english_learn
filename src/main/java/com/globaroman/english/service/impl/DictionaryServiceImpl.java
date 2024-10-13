@@ -4,8 +4,6 @@ import com.globaroman.english.model.DictionaryWord;
 import com.globaroman.english.repository.DictionaryRepository;
 import com.globaroman.english.service.AwsTranslateService;
 import com.globaroman.english.service.DictionaryService;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,30 +15,6 @@ public class DictionaryServiceImpl implements DictionaryService {
     private final AwsTranslateService translateService;
 
     @Override
-    public void loadToDataBase(List<DictionaryWord> list) {
-        dictionaryRepository.saveAll(list);
-    }
-
-    @Override
-    public String loadToDataBaseIfNoThisWord(List<String> list) {
-        int count = 0;
-
-        List<DictionaryWord> dictionaryWords = new ArrayList<>();
-
-        for (String string : list) {
-            List<DictionaryWord> words = dictionaryRepository.findByWord(string);
-
-            for (DictionaryWord word : words) {
-                word.setWordLearned(false);
-                dictionaryRepository.save(word);
-            }
-            count++;
-        }
-
-        return "Добавлено " + count + " слів до бази даних";
-    }
-
-    @Override
     public String getRandomWordFromDB() {
         DictionaryWord word = dictionaryRepository.findRandomWord();
         word.setWordLearned(true);
@@ -50,13 +24,13 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public String saveNewWord(String line) {
-        List<DictionaryWord> words = dictionaryRepository.findByWord(line);
-        if (words.isEmpty()) {
+
+        if (dictionaryRepository.existsByEnglishWord(line)) {
+            return line + " вже існує!";
+        } else {
             DictionaryWord word = getNewWord(line);
             return "Добавлено: " + word.getEnglishWord() + " : " + word.getTranslatedWord();
         }
-
-        return line + " вже існує";
     }
 
     @Override
@@ -64,8 +38,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         StringBuilder sb = new StringBuilder();
         sb.append("Добавлено: \n");
         for (String data : afterProcessDatas) {
-            List<DictionaryWord> words = dictionaryRepository.findByWord(data);
-            if (words.isEmpty() && !data.isEmpty()) {
+            if (!dictionaryRepository.existsByEnglishWord(data) && !data.isEmpty()) {
                 DictionaryWord word = getNewWord(data);
                 sb.append(word.getEnglishWord()).append(" : ")
                         .append(word.getTranslatedWord()).append("\n");

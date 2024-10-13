@@ -3,7 +3,6 @@ package com.globaroman.english.controller;
 import com.globaroman.english.config.BotConfig;
 import com.globaroman.english.service.AwsTranslateService;
 import com.globaroman.english.service.DictionaryService;
-import com.globaroman.english.service.LoadWorldFromDataBase;
 import com.globaroman.english.service.ProcessingDataService;
 import com.globaroman.english.service.ReadWriteFromToFileService;
 import com.vdurmont.emoji.EmojiParser;
@@ -29,21 +28,18 @@ public class TelegrammBot extends TelegramLongPollingBot {
     private static final int TWO_WORDS = 2;
     private static final int ONE_WORD = 1;
     private final BotConfig botConfig;
-    private final LoadWorldFromDataBase loadWorldFromDataBase;
     private final AwsTranslateService translateService;
     private final DictionaryService dictionaryService;
     private final ReadWriteFromToFileService readWriteFromToFileService;
     private final ProcessingDataService processingDataService;
 
     public TelegrammBot(BotConfig botConfig,
-                        LoadWorldFromDataBase loadWorldFromDataBase,
                         AwsTranslateService translateService,
                         DictionaryService dictionaryService,
                         ReadWriteFromToFileService readWriteFromToFileService,
                         ProcessingDataService processingDataService
                         ) {
         this.botConfig = botConfig;
-        this.loadWorldFromDataBase = loadWorldFromDataBase;
         this.translateService = translateService;
         this.dictionaryService = dictionaryService;
         this.readWriteFromToFileService = readWriteFromToFileService;
