@@ -147,11 +147,7 @@ public class TelegrammBot extends TelegramLongPollingBot {
     }
 
     private String getRandomWordFromDB(int countWords) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < countWords; i++) {
-            sb.append(dictionaryService.getRandomWordFromDB()).append("\n");
-        }
-        return sb.toString();
+        return "Добавлено:\n" + dictionaryService.getWordsFromDB(countWords);
     }
 
     private void startCommandReceived(Long chatId, String firstName) {

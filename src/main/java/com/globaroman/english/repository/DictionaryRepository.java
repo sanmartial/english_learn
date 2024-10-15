@@ -21,4 +21,9 @@ public interface DictionaryRepository extends JpaRepository<DictionaryWord, Long
     int countByLearnedWordFalse();
 
     boolean existsByEnglishWord(String line);
+
+    @Query(value = "SELECT * FROM dictionary_words where learned_word = "
+            + "false ORDER BY RAND() LIMIT :countWords",
+            nativeQuery = true)
+    List<DictionaryWord> findRandEnglishWord(@Param("countWords")int countWords);
 }

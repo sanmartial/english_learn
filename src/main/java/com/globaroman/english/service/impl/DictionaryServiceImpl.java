@@ -4,7 +4,9 @@ import com.globaroman.english.model.DictionaryWord;
 import com.globaroman.english.repository.DictionaryRepository;
 import com.globaroman.english.service.AwsTranslateService;
 import com.globaroman.english.service.DictionaryService;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +46,7 @@ public class DictionaryServiceImpl implements DictionaryService {
                         .append(word.getTranslatedWord()).append("\n");
             }
         }
+
         return sb.toString();
     }
 
@@ -51,6 +54,16 @@ public class DictionaryServiceImpl implements DictionaryService {
     public String countNewWords() {
         int countNewWord = dictionaryRepository.countByLearnedWordFalse();
         return "База даних включає " + countNewWord + " нових слів";
+    }
+
+    @Override
+    public String getWordsFromDB(int countWords) {
+        List<DictionaryWord> words = dictionaryRepository.findRandEnglishWord(countWords);
+        return words.stream().peek(e -> {
+            e.setWordLearned(true);
+            dictionaryRepository.save(e);
+        }).map(e -> e.getEnglishWord() + " : " + e.getTranslatedWord())
+                .collect(Collectors.joining("\n"));
     }
 
     private DictionaryWord getNewWord(String line) {
