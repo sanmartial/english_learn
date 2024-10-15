@@ -11,4 +11,6 @@ public interface DictionaryService {
     String loadNewWordToDataBase(Set<String> afterProcessDatas);
 
     String countNewWords();
+
+    String getWordsFromDB(int countWords);
 }
